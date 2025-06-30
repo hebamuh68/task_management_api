@@ -1,6 +1,12 @@
 from sqlmodel import SQLModel, create_engine, Session
+import os
+from dotenv import load_dotenv
 
-sqlite_url = "sqlite:///./tasks.db"
+# Load environment variables
+load_dotenv()
+
+# Use environment variable for database URL
+sqlite_url = os.getenv("DATABASE_URL", "sqlite:///./task.db")
 engine = create_engine(sqlite_url, echo=True)
 
 
