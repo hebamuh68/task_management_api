@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends, Query
 from sqlmodel import Session, select
 from typing import List
 from .models import Task
-from .schemas import TaskCreate, TaskUpdate, TaskResponse
+from .schemas import TaskCreate, TaskUpdate, TaskResponse, BulkTaskUpdate
 from .database import get_session
 
 router = APIRouter()
@@ -65,3 +65,39 @@ def filter_by_status(status: str, session: Session = Depends(get_session)):
 def filter_by_priority(priority: str, session: Session = Depends(get_session)):
     tasks = session.exec(select(Task).where(Task.priority == priority)).all()
     return tasks
+
+# =============== Bulk Operations ===============
+@router.post("/tasks/bulk")
+def create_tasks_bulk(tasks: List[TaskCreate], session: Session = Depends(get_session)):
+    new_tasks = [Task(**task.dict()) for task in tasks]
+    session.add_all(new_tasks)
+    session.commit()
+    return new_tasks
+
+@router.put("/tasks/bulk/update", response_model=List[TaskResponse])
+def update_tasks_bulk(data: BulkTaskUpdate, session: Session = Depends(get_session)):
+    tasks = session.query(Task).filter(Task.id.in_(data.ids)).all()
+
+    if not tasks:
+        return []
+
+    for task in tasks:
+        for key, value in data.fields.items():
+            setattr(task, key, value)
+
+    session.commit()
+    for task in tasks:
+        session.refresh(task)
+    return tasks
+
+@router.delete("/tasks/bulk/delete")
+def delete_tasks_bulk(ids: List[int], session: Session = Depends(get_session)):
+    tasks = session.query(Task).filter(Task.id.in_(ids)).all()
+    if not tasks:
+        raise HTTPException(status_code=404, detail="No tasks found to delete")
+
+    for task in tasks:
+        session.delete(task)
+
+    session.commit()
+    return {"message": f"Deleted {len(tasks)} task(s)"}

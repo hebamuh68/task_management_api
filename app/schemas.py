@@ -1,5 +1,5 @@
 from pydantic import BaseModel, validator
-from typing import Optional
+from typing import List, Optional
 from datetime import datetime
 
 from app.utils import TitleValidationMixin, TaskBase
@@ -26,3 +26,9 @@ class TaskResponse(TaskCreate):
 
     class Config:
         orm_mode = True
+
+
+# =============== Bulk Operations ===============
+class BulkTaskUpdate(BaseModel):
+    ids: List[int]
+    fields: dict
