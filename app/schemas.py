@@ -5,7 +5,7 @@ from datetime import datetime
 from app.utils import TitleValidationMixin, TaskBase
 
 
-class TaskCreate(BaseModel, TitleValidationMixin, TaskBase):
+class TaskCreate(TitleValidationMixin, TaskBase):
     title: str
 
     @validator("due_date")
@@ -15,7 +15,7 @@ class TaskCreate(BaseModel, TitleValidationMixin, TaskBase):
         return v
 
 
-class TaskUpdate(BaseModel, TitleValidationMixin, TaskBase):
+class TaskUpdate(TitleValidationMixin, TaskBase):
     title: Optional[str]
 
 
