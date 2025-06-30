@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+ENV/
+.env/
+
+# SQLite database
+*.db
+
+# Environment variables
+.env
+
+# Alembic
+alembic/versions/__pycache__/
+
+# VSCode
+.vscode/
+
+# Docker
+*.pid
+
+# OS files
+.DS_Store
+Thumbs.db 
