@@ -3,10 +3,9 @@ from typing import Optional
 from datetime import datetime
 
 from app.utils import TitleValidationMixin, TaskBase
-from .models import TaskStatus, TaskPriority
 
 
-class TaskCreate(BaseModel, TitleValidationMixin,TaskBase):
+class TaskCreate(BaseModel, TitleValidationMixin, TaskBase):
     title: str
 
     @validator("due_date")
